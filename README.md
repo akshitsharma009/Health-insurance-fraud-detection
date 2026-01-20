@@ -1,3 +1,5 @@
+> This project was designed, implemented, and deployed by Akshit Sharma.
+
 # Health Insurance Fraud Detection
 
 An end-to-end Machine Learning project to identify potentially fraudulent health insurance claims using structured claim data.  
@@ -108,5 +110,6 @@ Add user authentication for enterprise use
 
 Akshit Sharma
 B.Tech Engineering Student | Machine Learning Enthusiast
+
 
 
