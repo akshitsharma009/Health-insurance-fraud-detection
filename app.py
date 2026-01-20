@@ -117,3 +117,9 @@ st.divider()
 st.caption(
     "Built using Machine Learning & Streamlit | Insurance Fraud Detection Project"
 )
+st.markdown("---")
+st.markdown(
+    "👨‍💻 **Created by Akshit Sharma** | "
+    "[GitHub](https://github.com/akshitsharma009)"
+)
+
