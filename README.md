@@ -26,16 +26,18 @@ This project aims to build a predictive system that flags high-risk insurance cl
 
 ---
 
-## 🗂 Project Structure
+## 📂 Project Structure
+
 Health-insurance-fraud-detection/
-│
 ├── app.py # Streamlit application
 ├── requirements.txt # Python dependencies
 ├── README.md # Project documentation
 │
 ├── data/
-│ ├── raw/ # Raw dataset
-│ └── processed/ # Feature engineered data
+│ ├── raw/
+│ │ └── fraud_insurance_claims.csv # Raw dataset
+│ └── processed/
+│ └── insurance_fraud_fe.csv # Feature engineered data
 │
 ├── notebooks/
 │ ├── 01_data_exploration.ipynb
@@ -105,3 +107,4 @@ Add user authentication for enterprise use
 
 Akshit Sharma
 B.Tech Engineering Student | Machine Learning Enthusiast
+
