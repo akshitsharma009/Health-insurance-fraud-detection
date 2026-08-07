@@ -87,6 +87,46 @@ def build_input_df(user_inputs: dict) -> pd.DataFrame:
     default_data.update(user_inputs)
 
     # -----------------------------
+    # Auto-derive claim sub-components from total_claim_amount
+    # -----------------------------
+    # BUG FIX: The original version left injury_claim / property_claim /
+    # vehicle_claim at fixed defaults (30000 / 30000 / 40000) regardless of
+    # what total_claim_amount the user entered. In the training data,
+    # injury_claim + property_claim + vehicle_claim == total_claim_amount
+    # for every single row (a strict, always-true relationship) -- so a
+    # user entering a much larger or smaller total claim than the ~100000
+    # default produced an internally-inconsistent row the model had never
+    # seen anything like during training (e.g. sub-claims summing to only
+    # 8% of the stated total claim amount), which made predictions
+    # unreliable for anything but claim amounts near the default.
+    #
+    # Fix: unless the caller explicitly supplies injury_claim /
+    # property_claim / vehicle_claim, derive them from total_claim_amount
+    # using the average split observed across the training data
+    # (~13.9% injury, ~13.9% property, ~72.2% vehicle), so the three
+    # sub-claims always sum exactly to total_claim_amount, keeping the
+    # row consistent with the pattern the model actually learned.
+    INJURY_SPLIT = 0.1392
+    PROPERTY_SPLIT = 0.1386
+    VEHICLE_SPLIT = 0.7221
+
+    user_gave_subclaims = any(
+        k in user_inputs for k in ("injury_claim", "property_claim", "vehicle_claim")
+    )
+
+    if not user_gave_subclaims:
+        total_claim_amount = default_data["total_claim_amount"]
+        default_data["injury_claim"] = round(total_claim_amount * INJURY_SPLIT)
+        default_data["property_claim"] = round(total_claim_amount * PROPERTY_SPLIT)
+        # Vehicle claim absorbs the rounding remainder so the three always
+        # sum exactly back to total_claim_amount.
+        default_data["vehicle_claim"] = (
+            total_claim_amount
+            - default_data["injury_claim"]
+            - default_data["property_claim"]
+        )
+
+    # -----------------------------
     # Recompute engineered ratios safely
     # -----------------------------
     premium = max(default_data["policy_annual_premium"], 1)

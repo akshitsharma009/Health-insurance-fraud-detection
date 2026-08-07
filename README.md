@@ -88,6 +88,8 @@ A follow-up review of the original pipeline surfaced two real data-quality issue
 
 **3. No model comparison beyond Logistic Regression / Random Forest, and no cross-validation.** The original evaluation used a single train/test split, which has high variance on a dataset this size (1,000 rows). Fix: added 5-fold stratified cross-validation for model selection, a hyperparameter search (`RandomizedSearchCV`) for Random Forest and XGBoost, and XGBoost as a third candidate model — which won.
 
+**4. Inconsistent claim sub-components at inference time.** The Streamlit form only collects a single `Total Claim Amount`, while `injury_claim`, `property_claim`, and `vehicle_claim` silently stayed at fixed defaults (₹30,000 / ₹30,000 / ₹40,000) no matter what total the user entered. In the training data, these three components sum *exactly* to `total_claim_amount` for every single row — a strict pattern the model relies on. Entering a total far from the ~₹1,00,000 default (e.g. ₹12,00,000) produced an internally-inconsistent row unlike anything seen in training, which could distort predictions for unusually large or small claims. Fix: `src/input_schema.py` now auto-derives the three sub-claims from whichever total claim amount is entered, using the average split observed in the training data (≈13.9% injury / 13.9% property / 72.2% vehicle), so the sub-claims always sum back to the entered total.
+
 ### Results: Before vs. After
 
 | Metric (fraud / positive class) | Original (Logistic Regression, threshold 0.3) | Enhanced (XGBoost, threshold 0.3) |
