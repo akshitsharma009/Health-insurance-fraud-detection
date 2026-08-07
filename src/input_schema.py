@@ -49,6 +49,16 @@ def build_input_df(user_inputs: dict) -> pd.DataFrame:
         "no_witness_high_severity": 0,
 
         # -----------------
+        # Missingness indicator flags
+        # (the app's form always collects a concrete value for these
+        # fields, so they default to "not missing"; kept here so the
+        # input row has the exact column set the model was trained on)
+        # -----------------
+        "collision_type_missing": 0,
+        "property_damage_missing": 0,
+        "police_report_available_missing": 0,
+
+        # -----------------
         # Categorical features
         # -----------------
         "policy_state": "OH",
@@ -64,18 +74,11 @@ def build_input_df(user_inputs: dict) -> pd.DataFrame:
         "authorities_contacted": "Police",
         "incident_state": "OH",
         "incident_city": "Columbus",
-        "incident_location": "Unknown",
         "property_damage": "NO",
         "police_report_available": "YES",
         "auto_make": "Toyota",
         "auto_model": "Camry",
         "auto_year": 2018,
-        "insured_zip": "43004",
-
-        # -----------------
-        # Identifier-like numeric column
-        # -----------------
-        "policy_number": 0
     }
 
     # -----------------------------
